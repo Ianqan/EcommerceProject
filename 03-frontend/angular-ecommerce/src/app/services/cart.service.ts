@@ -21,12 +21,7 @@ export class CartService {
 
     // find the item if exists
     if (this.cartItems.length > 0) {
-      for (let tempCartItem of this.cartItems) {
-        if (tempCartItem.id == cartItem.id) {
-          existingCartItem = tempCartItem;
-          break;
-        }
-      }
+      existingCartItem = this.cartItems.find(item => item.id === cartItem.id);
       alreadyExistsInCart = (existingCartItem != undefined);
     }
     
@@ -53,5 +48,24 @@ export class CartService {
     this.totalPrice.next(totalPriceVal);
     this.totalQuantity.next(totalQuantityVal);
     // console.log(`${totalPriceVal}`);
+  }
+
+  decrementQuantity(cartItem: CartItem) {
+    cartItem.quantity--;
+    if (cartItem.quantity == 0) {
+      this.remove(cartItem);
+    }
+    else {
+      this.computeCartTotals();
+    }
+  }
+
+  remove(cartItem: CartItem) {
+    const itemIndex = this.cartItems.findIndex(item => item.id == cartItem.id);
+    
+    if (itemIndex > -1) {
+      this.cartItems.splice(itemIndex, 1);
+      this.computeCartTotals();
+    }
   }
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Product } from '../common/product';
 import { map } from 'rxjs/operators'
 import { ProductCategory } from '../common/product-category';
+import { CartItem } from '../common/cart-item';
 
 @Injectable({
   providedIn: 'root'
