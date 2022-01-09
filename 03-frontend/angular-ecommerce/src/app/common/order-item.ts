@@ -1,4 +1,4 @@
-import { CartItem } from "./cart-item";
+import { CartItem } from './cart-item';
 
 export class OrderItem {
     imageUrl: string;
@@ -8,8 +8,8 @@ export class OrderItem {
 
     constructor(cartItem: CartItem) {
         this.imageUrl = cartItem.imageUrl;
-        this.unitPrice = cartItem.unitPrice;
         this.quantity = cartItem.quantity;
+        this.unitPrice = cartItem.unitPrice;
         this.productId = cartItem.id;
     }
 }
