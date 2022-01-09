@@ -21,7 +21,8 @@ import {
   OktaAuthModule,
   OktaCallbackComponent,
   OktaAuthGuard
-} from '@okta/okta-angular'
+} from '@okta/okta-angular';
+
 import myAppConfig from './config/my-app-config';
 import { MembersPageComponent } from './components/members-page/members-page.component';
 
@@ -44,7 +45,7 @@ const routes: Routes = [
   {path: 'category', component: ProductListComponent},
   {path: 'products', component: ProductListComponent},
   {path: '', redirectTo: '/products', pathMatch: 'full'},
-  {path: '**', redirectTo: '/products', pathMatch: 'full'},
+  {path: '**', redirectTo: '/products', pathMatch: 'full'}
 ];
 
 @NgModule({

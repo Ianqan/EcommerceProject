@@ -11,7 +11,19 @@ export class CartService {
   totalPrice: Subject<number> = new BehaviorSubject<number>(0);
   totalQuantity: Subject<number> = new BehaviorSubject<number>(0);
 
-  constructor() { }
+  //storage: Storage = sessionStorage;
+  storage: Storage = localStorage;
+
+  constructor() { 
+    // read data from storage
+    let data = JSON.parse(this.storage.getItem('cartItem')) || [];
+
+    if (data != null) {
+      this.cartItems = data;
+      // compute totals based on the data read from storage
+      this.computeCartTotals();
+    }
+  }
 
   addToCart(cartItem: CartItem) {
     
@@ -36,24 +48,48 @@ export class CartService {
   }
 
   computeCartTotals() {
-    let totalPriceVal: number = 0;
-    let totalQuantityVal: number = 0;
 
-    for (let item of this.cartItems) {
-      totalPriceVal += item.unitPrice * item.quantity;
-      totalQuantityVal += item.quantity;
+    let totalPriceValue: number = 0;
+    let totalQuantityValue: number = 0;
+
+    for (let currentCartItem of this.cartItems) {
+      totalPriceValue += currentCartItem.quantity * currentCartItem.unitPrice;
+      totalQuantityValue += currentCartItem.quantity;
     }
 
-    // publish to all subscribers
-    this.totalPrice.next(totalPriceVal);
-    this.totalQuantity.next(totalQuantityVal);
-    // console.log(`${totalPriceVal}`);
+    // publish the new values ... all subscribers will receive the new data
+    this.totalPrice.next(totalPriceValue);
+    this.totalQuantity.next(totalQuantityValue);
+
+    // log cart data just for debugging purposes
+    this.logCartData(totalPriceValue, totalQuantityValue);
+
+    // persist the cart data
+    this.persistCartItems();
   }
 
-  decrementQuantity(cartItem: CartItem) {
-    cartItem.quantity--;
-    if (cartItem.quantity == 0) {
-      this.remove(cartItem);
+  persistCartItems() {
+    this.storage.setItem('cartItems', JSON.stringify(this.cartItems));
+  }
+
+  logCartData(totalPriceValue: number, totalQuantityValue: number) {
+
+    console.log('Contents of the cart');
+    for (let tempCartItem of this.cartItems) {
+      const subTotalPrice = tempCartItem.quantity * tempCartItem.unitPrice;
+      console.log(`name: ${tempCartItem.name}, quantity=${tempCartItem.quantity}, unitPrice=${tempCartItem.unitPrice}, subTotalPrice=${subTotalPrice}`);
+    }
+
+    console.log(`totalPrice: ${totalPriceValue.toFixed(2)}, totalQuantity: ${totalQuantityValue}`);
+    console.log('----');
+  }
+
+  decrementQuantity(theCartItem: CartItem) {
+
+    theCartItem.quantity--;
+
+    if (theCartItem.quantity === 0) {
+      this.remove(theCartItem);
     }
     else {
       this.computeCartTotals();
